@@ -2,11 +2,16 @@ import { requireAuth } from '../utils/authGuard.js';
 import { getRecipeById, updateRecipe } from '../services/recipeService.js';
 import { getCategories } from '../services/categoryService.js';
 import { getCurrentUserRole } from '../services/authService.js';
+import { validateImageFile, uploadRecipeImage, deleteRecipeImage, getRecipeImagePublicUrl } from '../services/storageService.js';
 
 const form = document.getElementById('recipeForm');
 const messageContainer = document.getElementById('messageContainer');
 const saveButton = document.getElementById('saveButton');
 const categorySelect = document.getElementById('category');
+const recipeImageInput = document.getElementById('recipeImage');
+const removeCurrentImageCheckbox = document.getElementById('removeCurrentImage');
+const currentImageContainer = document.getElementById('currentImageContainer');
+const currentImagePreview = document.getElementById('currentImagePreview');
 
 let currentRecipe = null;
 
@@ -21,7 +26,14 @@ function showMessage(message, type = 'danger') {
 }
 
 function setSaving(isSaving) {
-  if (!saveButton) return;
+  if (!saveButton || !form) return;
+
+  const controls = form.querySelectorAll('input, select, textarea, button');
+  controls.forEach((control) => {
+    if (control !== saveButton) {
+      control.disabled = isSaving;
+    }
+  });
 
   saveButton.disabled = isSaving;
   saveButton.textContent = isSaving ? 'Saving...' : 'Save Changes';
@@ -77,6 +89,27 @@ async function populateCategories() {
   }
 }
 
+function renderCurrentImage() {
+  if (!currentImageContainer || !currentImagePreview) return;
+
+  if (currentRecipe?.image_path) {
+    try {
+      const publicUrl = getRecipeImagePublicUrl(currentRecipe.image_path);
+      currentImageContainer.classList.remove('d-none');
+      currentImagePreview.src = publicUrl || '';
+      currentImagePreview.alt = currentRecipe.title ? `Current image for ${currentRecipe.title}` : 'Current recipe image';
+    } catch (error) {
+      currentImageContainer.classList.add('d-none');
+      currentImagePreview.src = '';
+      currentImagePreview.alt = '';
+    }
+  } else {
+    currentImageContainer.classList.add('d-none');
+    currentImagePreview.src = '';
+    currentImagePreview.alt = '';
+  }
+}
+
 function prefillForm(recipe) {
   if (!recipe) return;
 
@@ -91,6 +124,8 @@ function prefillForm(recipe) {
   if (categorySelect && recipe.category_id) {
     categorySelect.value = String(recipe.category_id);
   }
+
+  renderCurrentImage();
 }
 
 async function initializePage() {
@@ -132,6 +167,9 @@ if (form) {
     event.preventDefault();
     showMessage('');
 
+    let uploadedImagePath = null;
+    let shouldDeleteOldImage = false;
+
     try {
       validateForm();
       setSaving(true);
@@ -143,6 +181,26 @@ if (form) {
       const preparationMinutes = document.getElementById('preparationMinutes').value;
       const servings = document.getElementById('servings').value;
       const published = document.getElementById('published').checked;
+      const removeCurrentImage = removeCurrentImageCheckbox?.checked ?? false;
+      const selectedFile = recipeImageInput?.files?.[0] ?? null;
+
+      let nextImagePath = currentRecipe?.image_path ?? null;
+
+      if (removeCurrentImage) {
+        nextImagePath = null;
+        shouldDeleteOldImage = Boolean(currentRecipe?.image_path);
+      } else if (selectedFile) {
+        const validation = validateImageFile(selectedFile);
+
+        if (!validation.isValid) {
+          throw new Error(validation.error);
+        }
+
+        const uploadResult = await uploadRecipeImage(selectedFile);
+        uploadedImagePath = uploadResult.filePath;
+        nextImagePath = uploadedImagePath;
+        shouldDeleteOldImage = Boolean(currentRecipe?.image_path);
+      }
 
       const payload = {
         title,
@@ -152,13 +210,27 @@ if (form) {
         category_id: categorySelect?.value ? Number(categorySelect.value) : null,
         preparation_minutes: preparationMinutes ? Number(preparationMinutes) : null,
         servings: servings ? Number(servings) : null,
+        image_path: nextImagePath,
         is_published: published,
       };
 
       const updatedRecipe = await updateRecipe(currentRecipe.id, payload);
+
+      if (shouldDeleteOldImage && currentRecipe?.image_path && currentRecipe.image_path !== nextImagePath) {
+        await deleteRecipeImage(currentRecipe.image_path);
+      }
+
       showMessage('Recipe updated successfully.', 'success');
       window.location.replace(`recipe-details.html?id=${updatedRecipe.id}`);
     } catch (error) {
+      if (uploadedImagePath) {
+        try {
+          await deleteRecipeImage(uploadedImagePath);
+        } catch (cleanupError) {
+          console.error('Failed to clean up uploaded image:', cleanupError);
+        }
+      }
+
       showMessage(error.message || 'Unable to update recipe.', 'danger');
     } finally {
       setSaving(false);

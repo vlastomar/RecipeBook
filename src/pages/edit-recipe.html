@@ -45,6 +45,19 @@
                 <input id="servings" name="servings" type="number" min="1" class="form-control" />
               </div>
             </div>
+            <div class="mb-3 mt-3">
+              <label for="recipeImage" class="form-label">Replace image (optional)</label>
+              <input id="recipeImage" name="recipeImage" class="form-control" type="file" accept="image/jpeg,image/png,image/webp" />
+              <div class="form-text">JPEG, PNG, or WebP up to 5 MB.</div>
+            </div>
+            <div class="form-check mt-2">
+              <input id="removeCurrentImage" name="removeCurrentImage" class="form-check-input" type="checkbox" />
+              <label for="removeCurrentImage" class="form-check-label">Remove current image</label>
+            </div>
+            <div id="currentImageContainer" class="mt-3 d-none">
+              <label class="form-label">Current image</label>
+              <img id="currentImagePreview" class="img-fluid rounded" alt="Current recipe image" />
+            </div>
             <div class="form-check mt-4">
               <input id="published" name="published" class="form-check-input" type="checkbox" />
               <label for="published" class="form-check-label">Published</label>
