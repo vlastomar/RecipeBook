@@ -11,18 +11,47 @@
 
     <main class="container py-5">
       <div class="card shadow-sm">
-        <div class="card-body">
-          <h1 class="card-title">Add Recipe</h1>
-          <form>
+        <div class="card-body p-4">
+          <h1 class="card-title mb-4">Add Recipe</h1>
+          <div id="messageContainer" class="mb-3" aria-live="polite"></div>
+          <form id="recipeForm" novalidate>
             <div class="mb-3">
-              <label class="form-label">Title</label>
-              <input class="form-control" />
+              <label for="title" class="form-label">Title</label>
+              <input id="title" name="title" class="form-control" required />
             </div>
             <div class="mb-3">
-              <label class="form-label">Description</label>
-              <textarea class="form-control"></textarea>
+              <label for="category" class="form-label">Category</label>
+              <select id="category" name="category" class="form-select" required></select>
             </div>
-            <button class="btn btn-primary" type="button">Save</button>
+            <div class="mb-3">
+              <label for="description" class="form-label">Short Description</label>
+              <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="ingredients" class="form-label">Ingredients</label>
+              <textarea id="ingredients" name="ingredients" class="form-control" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="instructions" class="form-label">Instructions</label>
+              <textarea id="instructions" name="instructions" class="form-control" rows="6" required></textarea>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="preparationMinutes" class="form-label">Preparation Minutes</label>
+                <input id="preparationMinutes" name="preparationMinutes" type="number" min="1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label for="servings" class="form-label">Servings</label>
+                <input id="servings" name="servings" type="number" min="1" class="form-control" />
+              </div>
+            </div>
+            <div class="form-check mt-4">
+              <input id="published" name="published" class="form-check-input" type="checkbox" checked />
+              <label for="published" class="form-check-label">Published</label>
+            </div>
+            <div class="d-flex justify-content-end mt-4">
+              <button id="saveButton" class="btn btn-primary" type="submit">Save Recipe</button>
+            </div>
           </form>
         </div>
       </div>
@@ -34,6 +63,7 @@
       import 'bootstrap/dist/css/bootstrap.min.css';
       import { renderNavbar } from '../assets/js/components/navbar.js';
       import { renderFooter } from '../assets/js/components/footer.js';
+      import '../assets/js/pages/add-recipe.js';
 
       renderNavbar('recipes');
       renderFooter();
