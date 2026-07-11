@@ -45,6 +45,12 @@
                 <input id="servings" name="servings" type="number" min="1" class="form-control" />
               </div>
             </div>
+            <div class="mb-3 mt-3">
+              <label for="recipeImage" class="form-label">Recipe Image (optional)</label>
+              <input id="recipeImage" name="recipeImage" class="form-control" type="file" accept="image/jpeg,image/png,image/webp" />
+              <div class="form-text">JPEG, PNG, or WebP up to 5 MB.</div>
+              <img id="imagePreview" class="img-fluid rounded mt-3 d-none" alt="Recipe preview" />
+            </div>
             <div class="form-check mt-4">
               <input id="published" name="published" class="form-check-input" type="checkbox" checked />
               <label for="published" class="form-check-label">Published</label>
