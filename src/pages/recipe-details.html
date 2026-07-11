@@ -10,20 +10,23 @@
     <div data-navbar></div>
 
     <main class="container py-5">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h1 class="card-title">Recipe Details</h1>
-          <p class="card-text">Placeholder page for full recipe information.</p>
+      <div id="statusMessage" class="mb-3" aria-live="polite"></div>
+      <div id="loadingState" class="text-center py-4" hidden>
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
       </div>
+      <div id="recipeContent" hidden></div>
     </main>
 
     <div data-footer></div>
 
     <script type="module">
       import 'bootstrap/dist/css/bootstrap.min.css';
+      import 'bootstrap-icons/font/bootstrap-icons.css';
       import { renderNavbar } from '../assets/js/components/navbar.js';
       import { renderFooter } from '../assets/js/components/footer.js';
+      import '../assets/js/pages/recipe-details.js';
 
       renderNavbar('recipes');
       renderFooter();
