@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Recipe - ReceiptBook</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body>
+    <div data-navbar></div>
+
+    <main class="container py-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="card-title">Add Recipe</h1>
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Title</label>
+              <input class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control"></textarea>
+            </div>
+            <button class="btn btn-primary" type="button">Save</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <div data-footer></div>
+
+    <script type="module">
+      import 'bootstrap/dist/css/bootstrap.min.css';
+      import { renderNavbar } from '../assets/js/components/navbar.js';
+      import { renderFooter } from '../assets/js/components/footer.js';
+
+      renderNavbar('recipes');
+      renderFooter();
+    </script>
+  </body>
+</html>

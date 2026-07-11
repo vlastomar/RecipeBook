@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipes - ReceiptBook</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body>
+    <div data-navbar></div>
+
+    <main class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Recipes</h1>
+        <a class="btn btn-primary" href="add-recipe.html">Add Recipe</a>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title">Sample Recipe</h5>
+              <p class="card-text">Starter placeholder for recipe cards.</p>
+              <a href="recipe-details.html" class="btn btn-outline-primary">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div data-footer></div>
+
+    <script type="module">
+      import 'bootstrap/dist/css/bootstrap.min.css';
+      import { renderNavbar } from '../assets/js/components/navbar.js';
+      import { renderFooter } from '../assets/js/components/footer.js';
+
+      renderNavbar('recipes');
+      renderFooter();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Recipes - ReceiptBook</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body>
+    <div data-navbar></div>
+
+    <main class="container py-5">
+      <h1>My Recipes</h1>
+      <p class="text-muted">Placeholder page for the signed-in user's recipes.</p>
+    </main>
+
+    <div data-footer></div>
+
+    <script type="module">
+      import 'bootstrap/dist/css/bootstrap.min.css';
+      import { renderNavbar } from '../assets/js/components/navbar.js';
+      import { renderFooter } from '../assets/js/components/footer.js';
+
+      renderNavbar('profile');
+      renderFooter();
+    </script>
+  </body>
+</html>

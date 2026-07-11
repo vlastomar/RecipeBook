@@ -1,0 +1,17 @@
+:root {
+  color-scheme: light;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.hero-card {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffffff 100%);
+}
+
+main {
+  min-height: 70vh;
+}

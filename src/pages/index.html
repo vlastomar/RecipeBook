@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReceiptBook</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body>
+    <div data-navbar></div>
+
+    <main class="container py-5">
+      <section class="hero-card p-5 rounded shadow-sm">
+        <h1 class="display-5 fw-bold">Welcome to ReceiptBook</h1>
+        <p class="lead">A simple multi-page starter app for collecting and sharing recipes.</p>
+        <a class="btn btn-primary" href="recipes.html">Browse Recipes</a>
+      </section>
+    </main>
+
+    <div data-footer></div>
+
+    <script type="module">
+      import 'bootstrap/dist/css/bootstrap.min.css';
+      import { renderNavbar } from '../assets/js/components/navbar.js';
+      import { renderFooter } from '../assets/js/components/footer.js';
+
+      renderNavbar('home');
+      renderFooter();
+    </script>
+  </body>
+</html>
