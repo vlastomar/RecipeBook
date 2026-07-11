@@ -1,5 +1,6 @@
 import { getPublishedRecipes } from '../services/recipeService.js';
 import { getCategories } from '../services/categoryService.js';
+import { getRecipeImagePublicUrl } from '../services/storageService.js';
 
 const recipesList = document.getElementById('recipesList');
 const filtersForm = document.getElementById('filtersForm');
@@ -41,6 +42,30 @@ function setLoading(isLoading) {
   }
 }
 
+const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';
+
+function getRecipeImageDetails(recipe) {
+  const title = recipe?.title || 'Recipe';
+  const altText = escapeHtml(`Photo of ${title}`);
+
+  if (recipe?.image_path) {
+    try {
+      const publicUrl = getRecipeImagePublicUrl(recipe.image_path);
+      return {
+        imageUrl: publicUrl || FALLBACK_IMAGE_URL,
+        altText,
+      };
+    } catch (error) {
+      console.error('Unable to resolve recipe image URL:', error);
+    }
+  }
+
+  return {
+    imageUrl: FALLBACK_IMAGE_URL,
+    altText,
+  };
+}
+
 function renderRecipes(recipes) {
   if (!recipesList) return;
 
@@ -58,7 +83,7 @@ function renderRecipes(recipes) {
   recipesList.innerHTML = recipes.map((recipe) => {
     const categoryName = recipe.category?.name || 'Uncategorized';
     const ownerName = recipe.owner?.display_name || 'Anonymous';
-    const imageUrl = recipe.image_path || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';
+    const imageDetails = getRecipeImageDetails(recipe);
     const description = recipe.description ? escapeHtml(recipe.description) : 'No description provided yet.';
     const title = escapeHtml(recipe.title || 'Untitled recipe');
     const safeCategory = escapeHtml(categoryName);
@@ -69,7 +94,7 @@ function renderRecipes(recipes) {
     return `
       <div class="col-12 col-md-6 col-lg-4">
         <article class="card shadow-sm h-100">
-          <img src="${imageUrl}" class="card-img-top" alt="${title}" style="height: 220px; object-fit: cover;" />
+          <img src="${imageDetails.imageUrl}" class="card-img-top img-fluid w-100" alt="${imageDetails.altText}" loading="lazy" style="height: 220px; object-fit: cover;" />
           <div class="card-body d-flex flex-column">
             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
               <h5 class="card-title mb-0">${title}</h5>

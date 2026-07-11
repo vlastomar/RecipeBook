@@ -1,5 +1,6 @@
 import { requireAuth } from '../utils/authGuard.js';
 import { getCurrentUserRecipes, deleteRecipe } from '../services/recipeService.js';
+import { getRecipeImagePublicUrl } from '../services/storageService.js';
 import { Modal } from 'bootstrap';
 
 const recipesList = document.getElementById('recipesList');
@@ -42,6 +43,30 @@ function formatDate(value) {
   return new Date(value).toLocaleDateString();
 }
 
+const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';
+
+function getRecipeImageDetails(recipe) {
+  const title = recipe?.title || 'Recipe';
+  const altText = escapeHtml(`Photo of ${title}`);
+
+  if (recipe?.image_path) {
+    try {
+      const publicUrl = getRecipeImagePublicUrl(recipe.image_path);
+      return {
+        imageUrl: publicUrl || FALLBACK_IMAGE_URL,
+        altText,
+      };
+    } catch (error) {
+      console.error('Unable to resolve recipe image URL:', error);
+    }
+  }
+
+  return {
+    imageUrl: FALLBACK_IMAGE_URL,
+    altText,
+  };
+}
+
 function renderRecipes() {
   if (!recipesList) return;
 
@@ -60,13 +85,13 @@ function renderRecipes() {
     const title = escapeHtml(recipe.title || 'Untitled recipe');
     const categoryName = escapeHtml(recipe.category?.name || 'Uncategorized');
     const status = recipe.is_published ? 'Published' : 'Draft';
-    const imageUrl = recipe.image_path || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';
+    const imageDetails = getRecipeImageDetails(recipe);
     const createdAt = formatDate(recipe.created_at);
 
     return `
       <div class="col-12 col-md-6 col-lg-4">
         <article class="card shadow-sm h-100">
-          <img src="${imageUrl}" class="card-img-top" alt="${title}" style="height: 220px; object-fit: cover;" />
+          <img src="${imageDetails.imageUrl}" class="card-img-top img-fluid w-100" alt="${imageDetails.altText}" loading="lazy" style="height: 220px; object-fit: cover;" />
           <div class="card-body d-flex flex-column">
             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
               <h5 class="card-title mb-0">${title}</h5>
