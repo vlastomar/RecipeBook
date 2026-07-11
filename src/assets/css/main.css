@@ -1,0 +1,116 @@
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+  padding-block: clamp(1.5rem, 3vw, 3rem);
+}
+
+main > .container,
+main > .container-fluid {
+  width: 100%;
+  padding-inline: clamp(1rem, 2vw, 1.5rem);
+}
+
+.hero-card,
+.hero-section {
+  border-radius: 1.25rem;
+}
+
+.card-img-top {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+}
+
+#recipesList .card-img-top,
+#latestRecipesGrid .card-img-top {
+  min-height: 14rem;
+}
+
+#recipeContent .card-img-top {
+  max-height: clamp(18rem, 42vw, 30rem);
+}
+
+#recipeContent .bg-light {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+#avatarPreview,
+#avatarFallback {
+  width: clamp(8rem, 24vw, 11.25rem) !important;
+  height: clamp(8rem, 24vw, 11.25rem) !important;
+  object-fit: cover;
+}
+
+#avatarFallback {
+  flex-shrink: 0;
+}
+
+#statusMessage .alert,
+#messageContainer .alert,
+#latestRecipesStatus .alert,
+#recipesList .alert,
+#loadingState .alert {
+  border-radius: 1rem;
+}
+
+#recipesList .alert,
+#latestRecipesGrid .alert,
+#statusMessage .alert,
+#messageContainer .alert {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.04);
+}
+
+body > [data-footer],
+body > #app-footer {
+  margin-top: auto;
+}
+
+body > [data-footer] > footer,
+body > #app-footer > footer {
+  width: 100%;
+}
+
+@media (max-width: 575.98px) {
+  main {
+    padding-block: 1rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  #recipesList .card-img-top,
+  #latestRecipesGrid .card-img-top {
+    min-height: 12rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
