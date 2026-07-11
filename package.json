@@ -14,6 +14,7 @@
     "bootstrap-icons": "^1.13.1"
   },
   "devDependencies": {
+    "supabase": "^2.109.1",
     "vite": "^5.4.10"
   }
 }
