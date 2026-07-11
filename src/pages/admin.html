@@ -3,23 +3,202 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin - ReceiptBook</title>
+    <title>Admin - RecipeBook</title>
     <link rel="stylesheet" href="../assets/css/style.css" />
   </head>
   <body>
     <div data-navbar></div>
 
     <main class="container py-5">
-      <h1>Admin Dashboard</h1>
-      <p class="text-muted">Starter page for administrative tools.</p>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-1">Admin Dashboard</h1>
+          <p class="text-muted mb-0">Manage recipes, categories, and user roles.</p>
+        </div>
+        <button id="createCategoryButton" class="btn btn-primary">Create Category</button>
+      </div>
+
+      <div id="messageContainer"></div>
+
+      <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboardSection" type="button" role="tab">Dashboard</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="recipes-tab" data-bs-toggle="tab" data-bs-target="#recipesSection" type="button" role="tab">Recipes</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categoriesSection" type="button" role="tab">Categories</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#usersSection" type="button" role="tab">Users & Roles</button>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-4" id="adminTabsContent">
+        <section class="tab-pane fade show active" id="dashboardSection" role="tabpanel" aria-labelledby="dashboard-tab">
+          <div id="dashboardLoading" class="text-center py-4" hidden>
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <div id="dashboardStats" class="row g-3"></div>
+        </section>
+
+        <section class="tab-pane fade" id="recipesSection" role="tabpanel" aria-labelledby="recipes-tab">
+          <div id="recipesLoading" class="text-center py-4" hidden>
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Recipe</th>
+                  <th>Owner</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>View</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody id="recipesTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="tab-pane fade" id="categoriesSection" role="tabpanel" aria-labelledby="categories-tab">
+          <div id="categoriesLoading" class="text-center py-4" hidden>
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="categoriesTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="tab-pane fade" id="usersSection" role="tabpanel" aria-labelledby="users-tab">
+          <div id="usersLoading" class="text-center py-4" hidden>
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
     </main>
+
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="categoryForm">
+            <div class="modal-header">
+              <h5 id="categoryModalTitle" class="modal-title">Create Category</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="categoryName" class="form-label">Name</label>
+                <input id="categoryName" name="name" type="text" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label for="categoryDescription" class="form-label">Description</label>
+                <textarea id="categoryDescription" name="description" class="form-control" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="cancelCategoryButton" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button id="categoryModalSubmit" type="submit" class="btn btn-primary">Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="recipeDeleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Recipe</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="recipeDeleteModalBody" class="mb-0">Delete this recipe?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="confirmRecipeDeleteButton" type="button" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="categoryDeleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Category</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="categoryDeleteModalBody" class="mb-0">Delete this category?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="confirmCategoryDeleteButton" type="button" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="roleChangeModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Change User Role</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="roleChangeModalBody" class="mb-3"></p>
+            <label for="roleSelect" class="form-label">New role</label>
+            <select id="roleSelect" class="form-select">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="confirmRoleChangeButton" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div data-footer></div>
 
     <script type="module">
       import 'bootstrap/dist/css/bootstrap.min.css';
+      import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+      import 'bootstrap-icons/font/bootstrap-icons.css';
       import { renderNavbar } from '../assets/js/components/navbar.js';
       import { renderFooter } from '../assets/js/components/footer.js';
+      import '../assets/js/pages/admin.js';
 
       renderNavbar('home');
       renderFooter();
