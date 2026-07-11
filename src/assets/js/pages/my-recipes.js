@@ -143,13 +143,18 @@ async function handleDeleteConfirmed() {
   if (!recipeToDelete) return;
 
   try {
-    await deleteRecipe(recipeToDelete);
+    const result = await deleteRecipe(recipeToDelete);
     if (deleteModal) {
       deleteModal.hide();
     }
     recipeToDelete = null;
     await loadRecipes();
-    showMessage('Recipe deleted successfully.', 'success');
+
+    if (result?.warning) {
+      showMessage(result.warning, 'warning');
+    } else {
+      showMessage('Recipe deleted successfully.', 'success');
+    }
   } catch (error) {
     showMessage(error.message || 'Unable to delete recipe.', 'danger');
   }

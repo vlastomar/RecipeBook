@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient.js';
+import { deleteRecipeImage } from './storageService.js';
 
 const RECIPE_SELECT = `
   id,
@@ -192,13 +193,33 @@ export async function updateRecipe(recipeId, recipeData) {
 
 export async function deleteRecipe(recipeId) {
   try {
+    const { data: recipeData, error: fetchError } = await supabase
+      .from('recipes')
+      .select('image_path')
+      .eq('id', recipeId)
+      .maybeSingle();
+
+    if (fetchError) {
+      throw new Error(`Unable to load recipe for deletion: ${fetchError.message}`);
+    }
+
     const { error } = await supabase.from('recipes').delete().eq('id', recipeId);
 
     if (error) {
       throw new Error(`Unable to delete recipe: ${error.message}`);
     }
 
-    return { success: true, recipeId };
+    let warning = null;
+
+    if (recipeData?.image_path) {
+      try {
+        await deleteRecipeImage(recipeData.image_path);
+      } catch (storageError) {
+        warning = `Recipe deleted successfully, but the stored image could not be removed from storage: ${storageError.message}`;
+      }
+    }
+
+    return { success: true, recipeId, warning };
   } catch (error) {
     throw new Error(error.message || 'Unable to delete recipe.');
   }
