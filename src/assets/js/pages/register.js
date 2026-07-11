@@ -35,7 +35,7 @@ function validateForm() {
     throw new Error('Email is required.');
   }
 
-  if (!/[A-Z0-9._%+-]+@[A-Z0-9.-]+/i.test(email)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/i.test(email)) {
     throw new Error('Please enter a valid email address.');
   }
 
