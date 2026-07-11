@@ -10,29 +10,54 @@
     <div data-navbar></div>
 
     <main class="container py-5">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Recipes</h1>
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+        <h1 class="mb-0">Recipes</h1>
         <a class="btn btn-primary" href="add-recipe.html">Add Recipe</a>
       </div>
-      <div class="row">
-        <div class="col-md-6 col-lg-4">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title">Sample Recipe</h5>
-              <p class="card-text">Starter placeholder for recipe cards.</p>
-              <a href="recipe-details.html" class="btn btn-outline-primary">View</a>
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <form id="filtersForm" class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+              <label for="searchInput" class="form-label">Search by title</label>
+              <input id="searchInput" name="search" type="text" class="form-control" placeholder="Search recipes" />
             </div>
-          </div>
+            <div class="col-12 col-md-3">
+              <label for="categoryFilter" class="form-label">Category</label>
+              <select id="categoryFilter" name="category" class="form-select"></select>
+            </div>
+            <div class="col-12 col-md-3">
+              <label for="sortSelect" class="form-label">Sort</label>
+              <select id="sortSelect" name="sort" class="form-select">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+              <button id="searchButton" class="btn btn-outline-primary flex-grow-1" type="submit">Search</button>
+              <button id="clearButton" class="btn btn-outline-secondary" type="button">Clear</button>
+            </div>
+          </form>
         </div>
       </div>
+
+      <div id="statusMessage" class="mb-3" aria-live="polite"></div>
+      <div id="recipesLoading" class="text-center py-4" hidden>
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div id="recipesList" class="row g-4"></div>
     </main>
 
     <div data-footer></div>
 
     <script type="module">
       import 'bootstrap/dist/css/bootstrap.min.css';
+      import 'bootstrap-icons/font/bootstrap-icons.css';
       import { renderNavbar } from '../assets/js/components/navbar.js';
       import { renderFooter } from '../assets/js/components/footer.js';
+      import '../assets/js/pages/recipes.js';
 
       renderNavbar('recipes');
       renderFooter();
