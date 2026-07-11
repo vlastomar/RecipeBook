@@ -6,6 +6,7 @@ import {
   deleteProfileImage,
   getProfileImagePublicUrl,
 } from '../services/storageService.js';
+import { showErrorAlert, showSuccessAlert, clearAlert } from '../components/alerts.js';
 
 const form = document.getElementById('profileForm');
 const loadingState = document.getElementById('loadingState');
@@ -27,17 +28,21 @@ let previewObjectUrl = null;
 function showMessage(message, type = 'danger') {
   if (!messageContainer) return;
 
-  messageContainer.innerHTML = `
-    <div class="alert alert-${type}" role="alert">
-      ${message}
-    </div>
-  `;
+  if (!message) {
+    clearAlert(messageContainer);
+    return;
+  }
+
+  if (type === 'success') {
+    showSuccessAlert(messageContainer, message);
+    return;
+  }
+
+  showErrorAlert(messageContainer, message);
 }
 
 function clearMessage() {
-  if (messageContainer) {
-    messageContainer.innerHTML = '';
-  }
+  clearAlert(messageContainer);
 }
 
 function setLoading(isLoading) {

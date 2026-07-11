@@ -1,34 +1,22 @@
 import { getRecipeById } from '../services/recipeService.js';
 import { getCurrentSession, getCurrentUserRole } from '../services/authService.js';
 import { getRecipeImagePublicUrl } from '../services/storageService.js';
+import { escapeHtml, formatDate } from '../utils/helpers.js';
+import { showAlert, clearAlert } from '../components/alerts.js';
 
 const statusMessage = document.getElementById('statusMessage');
 const loadingState = document.getElementById('loadingState');
 const recipeContent = document.getElementById('recipeContent');
 
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 function showStatus(message, type = 'danger') {
   if (!statusMessage) return;
 
-  statusMessage.innerHTML = `
-    <div class="alert alert-${type}" role="alert">
-      ${message}
-    </div>
-  `;
-}
-
-function hideStatus() {
-  if (statusMessage) {
-    statusMessage.innerHTML = '';
+  if (!message) {
+    clearAlert(statusMessage);
+    return;
   }
+
+  showAlert(statusMessage, message, type);
 }
 
 function setLoading(isLoading) {
@@ -38,11 +26,6 @@ function setLoading(isLoading) {
   if (recipeContent) {
     recipeContent.hidden = isLoading;
   }
-}
-
-function formatDate(value) {
-  if (!value) return 'Unknown';
-  return new Date(value).toLocaleDateString();
 }
 
 const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';
@@ -141,13 +124,13 @@ async function initializeRecipePage() {
 
   try {
     setLoading(true);
-    hideStatus();
+    clearAlert(statusMessage);
 
     const recipe = await getRecipeById(recipeId);
 
     if (!recipe) {
       setLoading(false);
-      showStatus('Recipe not found.', 'warning');
+      showAlert(statusMessage, 'Recipe not found.', 'warning');
       return;
     }
 
@@ -163,7 +146,7 @@ async function initializeRecipePage() {
     renderRecipe(recipe, isOwnerOrAdmin);
   } catch (error) {
     setLoading(false);
-    showStatus(error.message || 'Unable to load recipe.', 'danger');
+    showAlert(statusMessage, error.message || 'Unable to load recipe.', 'danger');
   } finally {
     setLoading(false);
   }

@@ -1,4 +1,6 @@
 import { loginUser, getCurrentSession } from '../services/authService.js';
+import { validateRequiredText } from '../utils/validators.js';
+import { showErrorAlert, clearAlert } from '../components/alerts.js';
 
 const form = document.getElementById('loginForm');
 const messageContainer = document.getElementById('messageContainer');
@@ -7,11 +9,12 @@ const submitButton = document.getElementById('loginButton');
 function showMessage(message, type = 'danger') {
   if (!messageContainer) return;
 
-  messageContainer.innerHTML = `
-    <div class="alert alert-${type} mb-0" role="alert">
-      ${message}
-    </div>
-  `;
+  if (!message) {
+    clearAlert(messageContainer);
+    return;
+  }
+
+  showErrorAlert(messageContainer, message);
 }
 
 function setSubmitting(isSubmitting) {
@@ -22,15 +25,15 @@ function setSubmitting(isSubmitting) {
 }
 
 function validateForm() {
-  const email = document.getElementById('email')?.value.trim() ?? '';
-  const password = document.getElementById('password')?.value ?? '';
+  const emailValidation = validateRequiredText(document.getElementById('email')?.value, 'Email');
+  const passwordValidation = validateRequiredText(document.getElementById('password')?.value, 'Password');
 
-  if (!email) {
-    throw new Error('Email is required.');
+  if (!emailValidation.isValid) {
+    throw new Error(emailValidation.error);
   }
 
-  if (!password) {
-    throw new Error('Password is required.');
+  if (!passwordValidation.isValid) {
+    throw new Error(passwordValidation.error);
   }
 }
 
@@ -48,7 +51,7 @@ async function redirectIfLoggedIn() {
 if (form) {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    messageContainer.innerHTML = '';
+    clearAlert(messageContainer);
 
     try {
       validateForm();

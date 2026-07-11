@@ -3,6 +3,8 @@ import { getRecipeById, updateRecipe } from '../services/recipeService.js';
 import { getCategories } from '../services/categoryService.js';
 import { getCurrentUserRole } from '../services/authService.js';
 import { validateImageFile, uploadRecipeImage, deleteRecipeImage, getRecipeImagePublicUrl } from '../services/storageService.js';
+import { validateRequiredText, validatePositiveInteger } from '../utils/validators.js';
+import { showErrorAlert, showWarningAlert, clearAlert } from '../components/alerts.js';
 
 const form = document.getElementById('recipeForm');
 const messageContainer = document.getElementById('messageContainer');
@@ -18,11 +20,17 @@ let currentRecipe = null;
 function showMessage(message, type = 'danger') {
   if (!messageContainer) return;
 
-  messageContainer.innerHTML = `
-    <div class="alert alert-${type}" role="alert">
-      ${message}
-    </div>
-  `;
+  if (!message) {
+    clearAlert(messageContainer);
+    return;
+  }
+
+  if (type === 'warning') {
+    showWarningAlert(messageContainer, message);
+    return;
+  }
+
+  showErrorAlert(messageContainer, message);
 }
 
 function setSaving(isSaving) {
@@ -45,35 +53,30 @@ function getRecipeIdFromUrl() {
 }
 
 function validateForm() {
-  const title = document.getElementById('title')?.value.trim() ?? '';
-  const category = categorySelect?.value ?? '';
-  const ingredients = document.getElementById('ingredients')?.value.trim() ?? '';
-  const instructions = document.getElementById('instructions')?.value.trim() ?? '';
+  const titleValidation = validateRequiredText(document.getElementById('title')?.value, 'Title');
+  const categoryValidation = validateRequiredText(categorySelect?.value, 'Category');
+  const ingredientsValidation = validateRequiredText(document.getElementById('ingredients')?.value, 'Ingredients');
+  const instructionsValidation = validateRequiredText(document.getElementById('instructions')?.value, 'Instructions');
   const preparationMinutes = document.getElementById('preparationMinutes')?.value;
   const servings = document.getElementById('servings')?.value;
 
-  if (!title) {
-    throw new Error('Title is required.');
+  if (!titleValidation.isValid) throw new Error(titleValidation.error);
+  if (!categoryValidation.isValid) throw new Error(categoryValidation.error);
+  if (!ingredientsValidation.isValid) throw new Error(ingredientsValidation.error);
+  if (!instructionsValidation.isValid) throw new Error(instructionsValidation.error);
+
+  if (preparationMinutes !== '' && preparationMinutes !== null) {
+    const preparationValidation = validatePositiveInteger(preparationMinutes, 'Preparation minutes');
+    if (!preparationValidation.isValid) {
+      throw new Error(preparationValidation.error);
+    }
   }
 
-  if (!category) {
-    throw new Error('Category is required.');
-  }
-
-  if (!ingredients) {
-    throw new Error('Ingredients are required.');
-  }
-
-  if (!instructions) {
-    throw new Error('Instructions are required.');
-  }
-
-  if (preparationMinutes !== '' && preparationMinutes !== null && Number(preparationMinutes) <= 0) {
-    throw new Error('Preparation minutes must be positive when provided.');
-  }
-
-  if (servings !== '' && servings !== null && Number(servings) <= 0) {
-    throw new Error('Servings must be positive when provided.');
+  if (servings !== '' && servings !== null) {
+    const servingsValidation = validatePositiveInteger(servings, 'Servings');
+    if (!servingsValidation.isValid) {
+      throw new Error(servingsValidation.error);
+    }
   }
 }
 

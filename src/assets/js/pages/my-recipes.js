@@ -2,6 +2,8 @@ import { requireAuth } from '../utils/authGuard.js';
 import { getCurrentUserRecipes, deleteRecipe } from '../services/recipeService.js';
 import { getRecipeImagePublicUrl } from '../services/storageService.js';
 import { Modal } from 'bootstrap';
+import { escapeHtml, formatDate } from '../utils/helpers.js';
+import { showAlert, clearAlert } from '../components/alerts.js';
 
 const recipesList = document.getElementById('recipesList');
 const loadingState = document.getElementById('loadingState');
@@ -13,34 +15,21 @@ let recipes = [];
 let recipeToDelete = null;
 let deleteModal = null;
 
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 function showMessage(message, type = 'danger') {
   if (!messageContainer) return;
 
-  messageContainer.innerHTML = `
-    <div class="alert alert-${type}" role="alert">
-      ${message}
-    </div>
-  `;
+  if (!message) {
+    clearAlert(messageContainer);
+    return;
+  }
+
+  showAlert(messageContainer, message, type);
 }
 
 function setLoading(isLoading) {
   if (loadingState) {
     loadingState.hidden = !isLoading;
   }
-}
-
-function formatDate(value) {
-  if (!value) return 'Unknown';
-  return new Date(value).toLocaleDateString();
 }
 
 const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';

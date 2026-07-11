@@ -1,4 +1,6 @@
 import { registerUser } from '../services/authService.js';
+import { validateRequiredText, validateEmail, validatePassword } from '../utils/validators.js';
+import { showErrorAlert, showSuccessAlert, clearAlert } from '../components/alerts.js';
 
 const form = document.getElementById('registerForm');
 const messageContainer = document.getElementById('messageContainer');
@@ -7,11 +9,17 @@ const submitButton = document.getElementById('registerButton');
 function showMessage(message, type = 'danger') {
   if (!messageContainer) return;
 
-  messageContainer.innerHTML = `
-    <div class="alert alert-${type} mb-0" role="alert">
-      ${message}
-    </div>
-  `;
+  if (!message) {
+    clearAlert(messageContainer);
+    return;
+  }
+
+  if (type === 'success') {
+    showSuccessAlert(messageContainer, message);
+    return;
+  }
+
+  showErrorAlert(messageContainer, message);
 }
 
 function setSubmitting(isSubmitting) {
@@ -22,28 +30,24 @@ function setSubmitting(isSubmitting) {
 }
 
 function validateForm() {
-  const displayName = document.getElementById('displayName')?.value.trim() ?? '';
-  const email = document.getElementById('email')?.value.trim() ?? '';
-  const password = document.getElementById('password')?.value ?? '';
+  const displayNameValidation = validateRequiredText(document.getElementById('displayName')?.value, 'Display name');
+  const emailValidation = validateEmail(document.getElementById('email')?.value);
+  const passwordValidation = validatePassword(document.getElementById('password')?.value);
   const confirmPassword = document.getElementById('confirmPassword')?.value ?? '';
 
-  if (!displayName) {
-    throw new Error('Display name is required.');
+  if (!displayNameValidation.isValid) {
+    throw new Error(displayNameValidation.error);
   }
 
-  if (!email) {
-    throw new Error('Email is required.');
+  if (!emailValidation.isValid) {
+    throw new Error(emailValidation.error);
   }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/i.test(email)) {
-    throw new Error('Please enter a valid email address.');
+  if (!passwordValidation.isValid) {
+    throw new Error(passwordValidation.error);
   }
 
-  if (password.length < 6) {
-    throw new Error('Password must be at least 6 characters long.');
-  }
-
-  if (confirmPassword !== password) {
+  if (confirmPassword !== document.getElementById('password')?.value) {
     throw new Error('Confirm password does not match.');
   }
 }
@@ -51,7 +55,7 @@ function validateForm() {
 if (form) {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    messageContainer.innerHTML = '';
+    clearAlert(messageContainer);
 
     try {
       validateForm();

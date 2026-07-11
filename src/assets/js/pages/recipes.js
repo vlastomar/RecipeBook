@@ -1,6 +1,8 @@
 import { getPublishedRecipes } from '../services/recipeService.js';
 import { getCategories } from '../services/categoryService.js';
 import { getRecipeImagePublicUrl } from '../services/storageService.js';
+import { escapeHtml } from '../utils/helpers.js';
+import { showAlert, clearAlert } from '../components/alerts.js';
 
 const recipesList = document.getElementById('recipesList');
 const filtersForm = document.getElementById('filtersForm');
@@ -11,29 +13,19 @@ const statusMessage = document.getElementById('statusMessage');
 const loadingElement = document.getElementById('recipesLoading');
 const clearButton = document.getElementById('clearButton');
 
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 function showStatus(message, type = 'danger') {
   if (!statusMessage) return;
 
-  statusMessage.innerHTML = `
-    <div class="alert alert-${type} mb-0" role="alert">
-      ${message}
-    </div>
-  `;
+  if (!message) {
+    clearAlert(statusMessage);
+    return;
+  }
+
+  showAlert(statusMessage, message, type, { className: 'mb-0' });
 }
 
 function clearStatus() {
-  if (statusMessage) {
-    statusMessage.innerHTML = '';
-  }
+  clearAlert(statusMessage);
 }
 
 function setLoading(isLoading) {

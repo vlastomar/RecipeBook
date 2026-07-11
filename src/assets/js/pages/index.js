@@ -1,31 +1,14 @@
 import { getCurrentSession } from '../services/authService.js';
 import { getPublishedRecipes } from '../services/recipeService.js';
 import { getRecipeImagePublicUrl } from '../services/storageService.js';
+import { escapeHtml } from '../utils/helpers.js';
+import { showErrorAlert, clearAlert } from '../components/alerts.js';
 
 const latestRecipesGrid = document.getElementById('latestRecipesGrid');
 const latestRecipesStatus = document.getElementById('latestRecipesStatus');
 const heroActions = document.getElementById('heroActions');
 
 const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';
-
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function showStatus(message, type = 'info') {
-  if (!latestRecipesStatus) return;
-
-  latestRecipesStatus.innerHTML = `
-    <div class="alert alert-${type} mb-0" role="status">
-      ${message}
-    </div>
-  `;
-}
 
 function getRecipeImageDetails(recipe) {
   const title = recipe?.title || 'Recipe';
@@ -117,7 +100,7 @@ async function loadLatestRecipes() {
     renderRecipes(recipes.slice(0, 3));
   } catch (error) {
     console.error('Unable to load latest recipes:', error);
-    showStatus(error.message || 'Unable to load latest recipes.', 'danger');
+    showErrorAlert(latestRecipesStatus, error.message || 'Unable to load latest recipes.');
     if (latestRecipesGrid) {
       latestRecipesGrid.innerHTML = '';
     }

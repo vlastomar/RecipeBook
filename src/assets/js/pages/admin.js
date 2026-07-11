@@ -11,6 +11,8 @@ import {
   updateUserRole,
 } from '../services/adminService.js';
 import { Modal } from 'bootstrap';
+import { formatDate } from '../utils/helpers.js';
+import { showAlert, clearAlert } from '../components/alerts.js';
 
 const dashboardSection = document.getElementById('dashboardSection');
 const recipesSection = document.getElementById('recipesSection');
@@ -57,22 +59,16 @@ let users = [];
 function showMessage(message, type = 'danger') {
   if (!messageContainer) return;
 
-  messageContainer.innerHTML = `
-    <div class="alert alert-${type}" role="alert">
-      ${message}
-    </div>
-  `;
+  if (!message) {
+    clearAlert(messageContainer);
+    return;
+  }
+
+  showAlert(messageContainer, message, type);
 }
 
 function clearMessage() {
-  if (messageContainer) {
-    messageContainer.innerHTML = '';
-  }
-}
-
-function formatDate(value) {
-  if (!value) return 'Unknown';
-  return new Date(value).toLocaleDateString();
+  clearAlert(messageContainer);
 }
 
 function setLoading(element, isLoading) {
