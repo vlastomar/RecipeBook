@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient.js';
 
 export const RECIPE_IMAGES_BUCKET = 'recipe-images';
+export const PROFILE_IMAGES_BUCKET = 'profile-images';
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -91,7 +92,7 @@ export function validateImageFile(file) {
   };
 }
 
-export async function uploadRecipeImage(file) {
+async function uploadImageToBucket(file, bucketName, errorPrefix) {
   const validation = validateImageFile(file);
 
   if (!validation.isValid) {
@@ -105,19 +106,17 @@ export async function uploadRecipeImage(file) {
   }
 
   if (!userData?.user) {
-    throw new Error('Authentication required to upload recipe images.');
+    throw new Error(`Authentication required to upload ${errorPrefix.toLowerCase()} images.`);
   }
 
   const uniqueFileName = createUniqueFileName(file.name, validation.mimeType);
   const filePath = `${userData.user.id}/${uniqueFileName}`;
 
-  const { data, error } = await supabase.storage
-    .from(RECIPE_IMAGES_BUCKET)
-    .upload(filePath, file, {
-      cacheControl: '3600',
-      upsert: false,
-      contentType: validation.mimeType,
-    });
+  const { data, error } = await supabase.storage.from(bucketName).upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: validation.mimeType,
+  });
 
   if (error) {
     throw new Error(`Unable to upload image: ${error.message}`);
@@ -125,16 +124,16 @@ export async function uploadRecipeImage(file) {
 
   return {
     filePath: data?.path || filePath,
-    publicUrl: getRecipeImagePublicUrl(data?.path || filePath),
+    publicUrl: getPublicUrlForBucket(bucketName, data?.path || filePath),
   };
 }
 
-export async function deleteRecipeImage(filePath) {
+async function deleteImageFromBucket(filePath, bucketName) {
   if (!filePath) {
     throw new Error('A stored image path is required.');
   }
 
-  const { error } = await supabase.storage.from(RECIPE_IMAGES_BUCKET).remove([filePath]);
+  const { error } = await supabase.storage.from(bucketName).remove([filePath]);
 
   if (error) {
     throw new Error(`Unable to delete image: ${error.message}`);
@@ -143,12 +142,36 @@ export async function deleteRecipeImage(filePath) {
   return { success: true, filePath };
 }
 
-export function getRecipeImagePublicUrl(filePath) {
+function getPublicUrlForBucket(bucketName, filePath) {
   if (!filePath) {
     throw new Error('A stored image path is required.');
   }
 
-  const { data } = supabase.storage.from(RECIPE_IMAGES_BUCKET).getPublicUrl(filePath);
+  const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
 
   return data?.publicUrl || null;
+}
+
+export async function uploadRecipeImage(file) {
+  return uploadImageToBucket(file, RECIPE_IMAGES_BUCKET, 'recipe');
+}
+
+export async function deleteRecipeImage(filePath) {
+  return deleteImageFromBucket(filePath, RECIPE_IMAGES_BUCKET);
+}
+
+export function getRecipeImagePublicUrl(filePath) {
+  return getPublicUrlForBucket(RECIPE_IMAGES_BUCKET, filePath);
+}
+
+export async function uploadProfileImage(file) {
+  return uploadImageToBucket(file, PROFILE_IMAGES_BUCKET, 'profile');
+}
+
+export async function deleteProfileImage(filePath) {
+  return deleteImageFromBucket(filePath, PROFILE_IMAGES_BUCKET);
+}
+
+export function getProfileImagePublicUrl(filePath) {
+  return getPublicUrlForBucket(PROFILE_IMAGES_BUCKET, filePath);
 }
