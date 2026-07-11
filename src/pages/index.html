@@ -3,17 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ReceiptBook</title>
+    <title>RecipeBook</title>
     <link rel="stylesheet" href="../assets/css/style.css" />
   </head>
   <body>
     <div data-navbar></div>
 
-    <main class="container py-5">
-      <section class="hero-card p-5 rounded shadow-sm">
-        <h1 class="display-5 fw-bold">Welcome to ReceiptBook</h1>
-        <p class="lead">A simple multi-page starter app for collecting and sharing recipes.</p>
-        <a class="btn btn-primary" href="recipes.html">Browse Recipes</a>
+    <main>
+      <section class="py-5 bg-body-tertiary border-bottom">
+        <div class="container py-lg-4">
+          <div class="row align-items-center g-5">
+            <div class="col-12 col-lg-6">
+              <span class="badge text-bg-warning-subtle text-warning-emphasis border border-warning-subtle mb-3">Cook, share, discover</span>
+              <h1 class="display-4 fw-bold lh-1 mb-3">RecipeBook keeps your favorite recipes organized and easy to share.</h1>
+              <p class="lead text-secondary mb-4">
+                Browse published recipes, create your own collection, and manage everything from one clean multi-page experience.
+              </p>
+              <div class="d-flex flex-column flex-sm-row gap-3" id="heroActions"></div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="p-4 p-md-5 rounded-4 shadow-sm bg-white border h-100">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
+                    <i class="bi bi-journal-bookmark-fill fs-4"></i>
+                  </div>
+                  <div>
+                    <p class="text-uppercase text-secondary small mb-1">What you can do</p>
+                    <h2 class="h4 mb-0">A home base for recipe discovery</h2>
+                  </div>
+                </div>
+                <ul class="list-unstyled mb-0 row g-3">
+                  <li class="col-12">
+                    <div class="d-flex gap-3">
+                      <i class="bi bi-search text-primary fs-4"></i>
+                      <div>
+                        <h3 class="h6 mb-1">Browse recipes</h3>
+                        <p class="text-secondary mb-0">Explore the latest published dishes from the community.</p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="col-12">
+                    <div class="d-flex gap-3">
+                      <i class="bi bi-share-fill text-primary fs-4"></i>
+                      <div>
+                        <h3 class="h6 mb-1">Share recipes</h3>
+                        <p class="text-secondary mb-0">Publish your favorites so other cooks can find and try them.</p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="col-12">
+                    <div class="d-flex gap-3">
+                      <i class="bi bi-bookmark-heart-fill text-primary fs-4"></i>
+                      <div>
+                        <h3 class="h6 mb-1">Save and manage your own content</h3>
+                        <p class="text-secondary mb-0">Keep your recipes, edits, and profile organized in your account.</p>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-5">
+        <div class="container">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-2 mb-4">
+            <div>
+              <p class="text-uppercase text-primary small fw-semibold mb-2">Latest recipes</p>
+              <h2 class="h1 fw-bold mb-0">Fresh from the kitchen</h2>
+            </div>
+            <a class="btn btn-outline-primary" href="recipes.html">View all recipes</a>
+          </div>
+
+          <div class="row g-4" id="latestRecipesGrid" aria-live="polite"></div>
+          <div id="latestRecipesStatus" class="mt-4"></div>
+        </div>
       </section>
     </main>
 
@@ -21,8 +87,10 @@
 
     <script type="module">
       import 'bootstrap/dist/css/bootstrap.min.css';
+      import 'bootstrap-icons/font/bootstrap-icons.css';
       import { renderNavbar } from '../assets/js/components/navbar.js';
       import { renderFooter } from '../assets/js/components/footer.js';
+      import '../assets/js/pages/index.js';
 
       renderNavbar('home');
       renderFooter();
