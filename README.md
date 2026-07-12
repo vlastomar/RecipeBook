@@ -1,6 +1,6 @@
 # RecipeBook
 
-RecipeBook is a multi-page recipe management web application where users can register, log in, create recipes, edit their own content, upload profile and recipe images, and browse published recipes. Administrators can manage all recipes and categories.
+RecipeBook is a multi-page recipe management web application where users can register, log in, create recipes, edit their own content, upload profile and recipe images, and browse published recipes. Administrators can manage all recipes and categories
 
 ## Project Description
 
