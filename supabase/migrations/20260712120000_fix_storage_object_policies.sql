@@ -14,7 +14,10 @@ TO authenticated
 WITH CHECK (
   bucket_id = 'recipe-images'
   AND auth.uid() IS NOT NULL
-  AND name LIKE auth.uid()::text || '/%'
+  AND (
+    owner_id = auth.uid()::text
+    OR name LIKE auth.uid()::text || '/%'
+  )
 );
 
 CREATE POLICY "Users can update own files"
@@ -29,7 +32,10 @@ USING (
 WITH CHECK (
   bucket_id = 'recipe-images'
   AND auth.uid() IS NOT NULL
-  AND name LIKE auth.uid()::text || '/%'
+  AND (
+    owner_id = auth.uid()::text
+    OR name LIKE auth.uid()::text || '/%'
+  )
 );
 
 CREATE POLICY "Users can delete own files"
@@ -39,7 +45,10 @@ TO authenticated
 USING (
   bucket_id = 'recipe-images'
   AND auth.uid() IS NOT NULL
-  AND name LIKE auth.uid()::text || '/%'
+  AND (
+    owner_id = auth.uid()::text
+    OR name LIKE auth.uid()::text || '/%'
+  )
 );
 
 CREATE POLICY "Admins can delete any recipe image"
@@ -66,7 +75,10 @@ TO authenticated
 WITH CHECK (
   bucket_id = 'profile-images'
   AND auth.uid() IS NOT NULL
-  AND name LIKE auth.uid()::text || '/%'
+  AND (
+    owner_id = auth.uid()::text
+    OR name LIKE auth.uid()::text || '/%'
+  )
 );
 
 CREATE POLICY "Users can update profile images in own folder"
@@ -81,7 +93,10 @@ USING (
 WITH CHECK (
   bucket_id = 'profile-images'
   AND auth.uid() IS NOT NULL
-  AND name LIKE auth.uid()::text || '/%'
+  AND (
+    owner_id = auth.uid()::text
+    OR name LIKE auth.uid()::text || '/%'
+  )
 );
 
 CREATE POLICY "Users can delete profile images in own folder"
@@ -91,5 +106,8 @@ TO authenticated
 USING (
   bucket_id = 'profile-images'
   AND auth.uid() IS NOT NULL
-  AND name LIKE auth.uid()::text || '/%'
+  AND (
+    owner_id = auth.uid()::text
+    OR name LIKE auth.uid()::text || '/%'
+  )
 );
