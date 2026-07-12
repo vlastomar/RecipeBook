@@ -15,6 +15,8 @@ RecipeBook uses a simple multi-page structure instead of a SPA, which keeps the 
 
 ## Architecture
 
+
+
 ### Front End
 
 - HTML pages in `src/pages/`
@@ -133,6 +135,36 @@ npm run build
 ```bash
 npm run preview
 ```
+
+## Deployment (Netlify)
+
+This project is ready for Netlify deployment.
+
+### Netlify Build Settings
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+
+These are already configured in `netlify.toml`.
+
+### Deploy Steps
+
+1. Push the project to GitHub.
+2. In Netlify, choose **Add new site** -> **Import an existing project**.
+3. Select your GitHub repository.
+4. Confirm build settings:
+	- Build command: `npm run build`
+	- Publish directory: `dist`
+5. Add environment variables in Netlify Site Settings -> Environment Variables:
+	- `VITE_SUPABASE_URL`
+	- `VITE_SUPABASE_ANON_KEY`
+6. Click **Deploy site**.
+
+### Post-Deploy Check
+
+- Open your live URL and verify it redirects to `src/pages/index.html`.
+- Test login/registration and recipe loading.
+- Confirm profile image upload and recipe image upload work with your Supabase policies.
 
 ## Key Folders and Files
 
