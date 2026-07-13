@@ -15,7 +15,45 @@ RecipeBook uses a simple multi-page structure instead of a SPA, which keeps the 
 
 ## Architecture
 
+```mermaid
+flowchart LR
+	U[User Browser] --> P[HTML Pages\n(src/pages)]
+	P --> J[JavaScript Modules\n(src/assets/js)]
+	J --> B[Bootstrap 5 UI]
+	J --> S[Supabase Client]
+	S --> A[Supabase Auth]
+	S --> D[Supabase Database]
+	S --> F[Supabase Storage]
 
+	D --> R1[profiles]
+	D --> R2[user_roles]
+	D --> R3[categories]
+	D --> R4[recipes]
+	F --> I1[recipe-images]
+	F --> I2[profile-images]
+```
+
+### Architecture Overview
+
+```mermaid
+flowchart TB
+	Home[index.html] --> Login[login.html]
+	Home --> Register[register.html]
+	Home --> Recipes[recipes.html]
+	Recipes --> Details[recipe-details.html]
+	Recipes --> Add[add-recipe.html]
+	Recipes --> MyRecipes[my-recipes.html]
+	MyRecipes --> Edit[edit-recipe.html]
+	MyRecipes --> Profile[profile.html]
+	MyRecipes --> Admin[admin.html]
+```
+
+### Flow Notes
+
+- Pages are separate HTML files and are loaded independently.
+- Shared UI is rendered through reusable JS modules.
+- Business logic is split into service files that talk to Supabase.
+- Authentication, database access, and storage are all handled through Supabase.
 
 ### Front End
 
