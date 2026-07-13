@@ -272,3 +272,25 @@ Contains local Supabase configuration and SQL migrations for schema, RLS, and st
 - The app expects authenticated users for create, edit, and profile actions.
 - Image uploads are stored in Supabase Storage with RLS policies that restrict access by user ownership.
 - Admin functionality depends on the `user_roles` table and the `public.is_admin()` helper.
+
+## Live Project
+
+https://recipebookvlad.netlify.app
+
+## GitHub Repository
+
+https://github.com/vlastomar/RecipeBook
+
+### Administrator
+
+- Email: vlad24@abv.bg
+- Password: 123456
+
+### Regular User
+
+- Email: vlastomar@yahoo.com
+- Password: 123456
+
+## Author
+
+Vladimir Marinov
